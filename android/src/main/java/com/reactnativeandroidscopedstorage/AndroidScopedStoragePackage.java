@@ -1,8 +1,6 @@
 package com.reactnativeandroidscopedstorage;
 
-
-
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;
@@ -15,23 +13,18 @@ import java.util.Collections;
 import java.util.List;
 
 public class AndroidScopedStoragePackage implements ReactPackage {
-    @NonNull
-    @Override
-    public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactContext) {
-        List<NativeModule> modules = new ArrayList<>();
-
-        modules.add(new AndroidScopedStorageModule(reactContext));
-        return modules;
-    }
-
+  @NonNull
   @Override
-  public List<Class<? extends JavaScriptModule>> createJSModules() {
-    return null;
+  public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactContext) {
+    List<NativeModule> modules = new ArrayList<>();
+
+    modules.add(new AndroidScopedStorageModule(reactContext));
+    return modules;
   }
 
   @NonNull
-    @Override
-    public List<ViewManager> createViewManagers(@NonNull ReactApplicationContext reactContext) {
-        return Collections.emptyList();
-    }
+  @Override
+  public List<ViewManager> createViewManagers(@NonNull ReactApplicationContext reactContext) {
+    return Collections.emptyList();
+  }
 }

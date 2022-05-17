@@ -19,14 +19,14 @@ import android.os.FileUtils;
 import android.os.ParcelFileDescriptor;
 import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+
 import android.util.Log;
 import android.widget.Toast;
 
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -70,21 +70,25 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
     public static final String SUB_DIRECTORY_NAME = "Video_Contest/";
     public static final String FILEPATH = "path";
     public static final String DURATION = "duration";
-    public static final String IMAGE_EVENT_NAME = "imageData"; // this key will use while you want to pass data android to react native and get data using this key in react native
-    public static final String VIDEO_EVENT_NAME = "videoData"; // this key will use while you want to pass data android to react native and get data using this key in react native
-    String[] permissionsBelowAndroid10 = new String[]{
+    public static final String IMAGE_EVENT_NAME = "imageData"; // this key will use while you want to pass data android
+                                                               // to react native and get data using this key in react
+                                                               // native
+    public static final String VIDEO_EVENT_NAME = "videoData"; // this key will use while you want to pass data android
+                                                               // to react native and get data using this key in react
+                                                               // native
+    String[] permissionsBelowAndroid10 = new String[] {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA,
-            READ_EXTERNAL_STORAGE};
+            READ_EXTERNAL_STORAGE };
 
-    String[] permissionsAboveAndroid10 = new String[]{
+    String[] permissionsAboveAndroid10 = new String[] {
             Manifest.permission.CAMERA,
-            READ_EXTERNAL_STORAGE};
+            READ_EXTERNAL_STORAGE };
     File photoFile = null;
 
     public AndroidScopedStorageModule(@Nullable ReactApplicationContext reactContext) {
         super(reactContext);
-        
+
         reactContext.addActivityEventListener(this);
     }
 
@@ -97,9 +101,9 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
     @ReactMethod
     public void accessStorage(int type) {
         Log.e("Type-->", String.valueOf(type));
-//        deleteCache(getReactApplicationContext());
+        // deleteCache(getReactApplicationContext());
         if (checkPermissions()) {
-            if (type == 3) //video Capture
+            if (type == 3) // video Capture
             {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
@@ -108,44 +112,52 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
-//                    getReactApplicationContext().getCurrentActivity().startActivityForResult(intent, VIDEO_CAPTURE_ABOVE_ANDROID10);
+                    // getReactApplicationContext().getCurrentActivity().startActivityForResult(intent,
+                    // VIDEO_CAPTURE_ABOVE_ANDROID10);
                 } else {
                     Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                    takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 30); // pass max seconds for video capturing
+                    takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 30); // pass max seconds for video
+                                                                                   // capturing
                     takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
-                    if (takeVideoIntent.resolveActivity(getReactApplicationContext().getCurrentActivity().getPackageManager()) != null) {
-                        getReactApplicationContext().startActivityForResult(takeVideoIntent, VIDEO_CAPTURE_BELOW_ANDROID10);
+                    if (takeVideoIntent.resolveActivity(
+                            getReactApplicationContext().getCurrentActivity().getPackageManager()) != null) {
+                        getReactApplicationContext().getCurrentActivity().startActivityForResult(takeVideoIntent,
+                                VIDEO_CAPTURE_BELOW_ANDROID10);
                     }
                 }
 
-            } else if (type == 4) //video Picker
+            } else if (type == 4) // video Picker
             {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     Intent intent = new Intent(Intent.ACTION_PICK,
                             MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    getReactApplicationContext().getCurrentActivity().startActivityForResult(intent, VIDEO_PICKER_ABOVE_ANDROID10);
+                    getReactApplicationContext().getCurrentActivity().startActivityForResult(intent,
+                            VIDEO_PICKER_ABOVE_ANDROID10);
                 } else {
                     Intent intent = new Intent(Intent.ACTION_PICK,
                             MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-                    getReactApplicationContext().getCurrentActivity().startActivityForResult(intent, VIDEO_PICKER_BELOW_ANDROID10);
+                    getReactApplicationContext().getCurrentActivity().startActivityForResult(intent,
+                            VIDEO_PICKER_BELOW_ANDROID10);
 
                 }
 
-            } else if (type == 1) //Image Capture
+            } else if (type == 1) // Image Capture
             {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     Intent takeImageIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     takeImageIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     takeImageIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    getReactApplicationContext().getCurrentActivity().startActivityForResult(takeImageIntent, IMAGE_CAPTURE_ABOVE_ANDROID10);
+                    getReactApplicationContext().getCurrentActivity().startActivityForResult(takeImageIntent,
+                            IMAGE_CAPTURE_ABOVE_ANDROID10);
                 } else {
                     StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
                     StrictMode.setVmPolicy(builder.build());
                     Intent takeImageIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-                    if (takeImageIntent.resolveActivity(getReactApplicationContext().getCurrentActivity().getPackageManager()) != null) {
+                    if (takeImageIntent.resolveActivity(
+                            getReactApplicationContext().getCurrentActivity().getPackageManager()) != null) {
 
                         try {
                             photoFile = createImageFile();
@@ -155,22 +167,25 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
                         }
                         if (photoFile != null) {
                             takeImageIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                            getReactApplicationContext().getCurrentActivity().startActivityForResult(takeImageIntent, IMAGE_CAPTURE_BELOW_ANDROID10);
+                            getReactApplicationContext().getCurrentActivity().startActivityForResult(takeImageIntent,
+                                    IMAGE_CAPTURE_BELOW_ANDROID10);
                         }
 
                     }
                 }
 
-            } else if (type == 2) //Image Picker
+            } else if (type == 2) // Image Picker
             {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     Intent intent = new Intent(Intent.ACTION_PICK,
                             MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    getReactApplicationContext().getCurrentActivity().startActivityForResult(intent, IMAGE_PICKER_ABOVE_ANDROID10);
+                    getReactApplicationContext().getCurrentActivity().startActivityForResult(intent,
+                            IMAGE_PICKER_ABOVE_ANDROID10);
                 } else {
                     Intent intent = new Intent(Intent.ACTION_PICK,
                             MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    getReactApplicationContext().getCurrentActivity().startActivityForResult(intent, IMAGE_PICKER_BELOW_ANDROID10);
+                    getReactApplicationContext().getCurrentActivity().startActivityForResult(intent,
+                            IMAGE_PICKER_BELOW_ANDROID10);
 
                 }
 
@@ -195,18 +210,19 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
 
         } else if (requestCode == VIDEO_PICKER_ABOVE_ANDROID10 && resultCode == RESULT_OK) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//                String filePath = "";
-//                filePath = getPathfromURI (data.getData());
-//                File file = new File(filePath);
-//                 long duration = 0;
-//                 duration = getVideoDurationBelowAndroid10(getReactApplicationContext(),file);
-//                if(duration == 0)
-//                {
-//                    Toast.makeText(getReactApplicationContext(), "This Video file is either not supported or currepted", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                Log.e("duration--->", String.valueOf(duration));
-//                Log.e("filePath-->",String.valueOf(file.getAbsolutePath()));
+                // String filePath = "";
+                // filePath = getPathfromURI (data.getData());
+                // File file = new File(filePath);
+                // long duration = 0;
+                // duration = getVideoDurationBelowAndroid10(getReactApplicationContext(),file);
+                // if(duration == 0)
+                // {
+                // Toast.makeText(getReactApplicationContext(), "This Video file is either not
+                // supported or currepted", Toast.LENGTH_SHORT).show();
+                // return;
+                // }
+                // Log.e("duration--->", String.valueOf(duration));
+                // Log.e("filePath-->",String.valueOf(file.getAbsolutePath()));
                 File videoFile = null;
                 try {
                     videoFile = File.createTempFile("Video_Contest", ".mp4");
@@ -214,7 +230,8 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
                     InputStream is = null;
                     OutputStream os = null;
                     try {
-                        is = getReactApplicationContext().getCurrentActivity().getContentResolver().openInputStream(data.getData());
+                        is = getReactApplicationContext().getCurrentActivity().getContentResolver()
+                                .openInputStream(data.getData());
                         os = new FileOutputStream(videoFile);
                         byte[] buffer = new byte[1024];
                         int length;
@@ -230,11 +247,16 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
                     e.printStackTrace();
                 }
 
-                /*String filePath = (new MediaAccessClass(BaseApplication.appInstance,getActivity())).getRealPath(getActivity(),uri);*/
+                /*
+                 * String filePath = (new
+                 * MediaAccessClass(BaseApplication.appInstance,getActivity())).getRealPath(
+                 * getActivity(),uri);
+                 */
 
-                /*String filePath = getPDFPath(uri);*/
+                /* String filePath = getPDFPath(uri); */
 
-                String fileName = videoFile.getAbsolutePath().substring(videoFile.getAbsolutePath().lastIndexOf("/") + 1);
+                String fileName = videoFile.getAbsolutePath()
+                        .substring(videoFile.getAbsolutePath().lastIndexOf("/") + 1);
                 long duration = 0;
                 duration = getVideoDurationBelowAndroid10(getReactApplicationContext(), videoFile);
                 writableMap.putString(FILEPATH, videoFile.getAbsolutePath());
@@ -248,10 +270,11 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
             final File file = new File(selectedFilePath);
             long duration = getVideoDurationBelowAndroid10(getReactApplicationContext(), file);
             if (duration == 0) {
-                Toast.makeText(getReactApplicationContext(), "This Video file is either not supported or currepted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getReactApplicationContext(), "This Video file is either not supported or currepted",
+                        Toast.LENGTH_SHORT).show();
                 return;
             }
-//            File file = saveVideo(vid);
+            // File file = saveVideo(vid);
             Log.e("FilePath-->", file.getAbsolutePath());
             Log.e("duration--->", String.valueOf(duration));
             writableMap.putString(FILEPATH, file.getAbsolutePath());
@@ -265,10 +288,11 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
             long duration = getVideoDurationBelowAndroid10(getReactApplicationContext(), file);
 
             if (duration == 0) {
-                Toast.makeText(getReactApplicationContext(), "This Video file is either not supported or currepted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getReactApplicationContext(), "This Video file is either not supported or currepted",
+                        Toast.LENGTH_SHORT).show();
                 return;
             }
-//            File file = saveVideo(vid);
+            // File file = saveVideo(vid);
             Log.e("FilePath-->", file.getAbsolutePath());
             Log.e("duration--->", String.valueOf(duration));
 
@@ -278,9 +302,10 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
             sendEvent(getReactApplicationContext(), VIDEO_EVENT_NAME, promiseArray);
 
         } else if (requestCode == IMAGE_CAPTURE_BELOW_ANDROID10 && resultCode == RESULT_OK) {
-//            Uri imgUri = data.getData();
-//            String selectedFilePath = FilePath.getPath(getReactApplicationContext(), imgUri);
-//            final File file = new File(selectedFilePath);
+            // Uri imgUri = data.getData();
+            // String selectedFilePath = FilePath.getPath(getReactApplicationContext(),
+            // imgUri);
+            // final File file = new File(selectedFilePath);
             Log.e("FilePath-->", photoFile.getAbsolutePath());
             writableMap.putString(FILEPATH, photoFile.getAbsolutePath());
             promiseArray.pushMap(writableMap);
@@ -295,37 +320,43 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
             promiseArray.pushMap(writableMap);
             sendEvent(getReactApplicationContext(), IMAGE_EVENT_NAME, promiseArray);
         } else if (requestCode == IMAGE_PICKER_ABOVE_ANDROID10 && resultCode == RESULT_OK) {
-//            Uri imgUri = data.getData();
-//            String selectedFilePath = FilePath.getPath(getReactApplicationContext(), imgUri);
-//            File file = new File(selectedFilePath);
-//            Log.e("FilePath-->", file.getAbsolutePath());
+            // Uri imgUri = data.getData();
+            // String selectedFilePath = FilePath.getPath(getReactApplicationContext(),
+            // imgUri);
+            // File file = new File(selectedFilePath);
+            // Log.e("FilePath-->", file.getAbsolutePath());
 
             File imageFile = null;
-            try{
-                imageFile = File.createTempFile("Video_contest" ,".jpg");
+            try {
+                imageFile = File.createTempFile("Video_contest", ".jpg");
 
                 InputStream is = null;
                 OutputStream os = null;
                 try {
-                    is = getReactApplicationContext().getCurrentActivity().getContentResolver().openInputStream(data.getData());
+                    is = getReactApplicationContext().getCurrentActivity().getContentResolver()
+                            .openInputStream(data.getData());
                     os = new FileOutputStream(imageFile);
                     byte[] buffer = new byte[1024];
                     int length;
                     while ((length = is.read(buffer)) > 0) {
                         os.write(buffer, 0, length);
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                 } finally {
                     is.close();
                     os.close();
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            /*String filePath = (new MediaAccessClass(BaseApplication.appInstance,getActivity())).getRealPath(getActivity(),uri);*/
+            /*
+             * String filePath = (new
+             * MediaAccessClass(BaseApplication.appInstance,getActivity())).getRealPath(
+             * getActivity(),uri);
+             */
 
-            /*String filePath = getPDFPath(uri);*/
+            /* String filePath = getPDFPath(uri); */
 
             String fileName = imageFile.getAbsolutePath().substring(imageFile.getAbsolutePath().lastIndexOf("/") + 1);
 
@@ -342,11 +373,15 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //            File file = new File(selectedFilePath);
-            //            Log.e("FilePath-->",file.getAbsolutePath());
+            // File file = new File(selectedFilePath);
+            // Log.e("FilePath-->",file.getAbsolutePath());
         }
     }
 
+    @Override
+    public void onNewIntent(Intent intent) {
+
+    }
 
     private WritableMap saveVideoForAndroi10AndAbove(Uri uri3) {
         WritableMap writableMap = new WritableNativeMap();
@@ -363,7 +398,9 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
         valuesvideos.put(MediaStore.Video.Media.DATE_TAKEN, System.currentTimeMillis());
         valuesvideos.put(MediaStore.Video.Media.IS_PENDING, 1);
         ContentResolver resolver = context.getContentResolver();
-        Uri collection = MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY); //all video files on primary external storage
+        Uri collection = MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY); // all video files on
+                                                                                                   // primary external
+                                                                                                   // storage
         Uri uriSavedVideo = resolver.insert(collection, valuesvideos);
 
         ParcelFileDescriptor pfd;
@@ -375,8 +412,8 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
             FileOutputStream out = new FileOutputStream(pfd.getFileDescriptor());
 
             // Get the already saved video as fileinputstream from here
-            InputStream in = getReactApplicationContext().getCurrentActivity().getContentResolver().openInputStream(uri3);
-
+            InputStream in = getReactApplicationContext().getCurrentActivity().getContentResolver()
+                    .openInputStream(uri3);
 
             byte[] buf = new byte[8192];
 
@@ -392,11 +429,12 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
             pfd.close();
             valuesvideos.clear();
             valuesvideos.put(MediaStore.Video.Media.IS_PENDING, 0);
-            valuesvideos.put(MediaStore.Video.Media.IS_PENDING, 0); //only your app can see the files until pending is turned into 0
+            valuesvideos.put(MediaStore.Video.Media.IS_PENDING, 0); // only your app can see the files until pending is
+                                                                    // turned into 0
 
             context.getContentResolver().update(uriSavedVideo, valuesvideos, null, null);
-            File file = new File(Environment.getExternalStorageDirectory() + File.separator + "/Movies/" + SUB_DIRECTORY_NAME + videoFileName);
-
+            File file = new File(Environment.getExternalStorageDirectory() + File.separator + "/Movies/"
+                    + SUB_DIRECTORY_NAME + videoFileName);
 
             long videoDuration = getVideoDurationBelowAndroid10(context, file);
             Log.e("Duration--->", String.valueOf(videoDuration));
@@ -426,12 +464,12 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
             contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
             contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, "DCIM/" + SUB_DIRECTORY_NAME);
             imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-            selectedFilePath = com.videocompetition.FilePath.getPath(getReactApplicationContext(), imageUri);
+            selectedFilePath = com.reactnativeandroidscopedstorage.FilePath.getPath(getReactApplicationContext(),
+                    imageUri);
 
             fos = resolver.openOutputStream(imageUri);
         }
-//
-
+        //
 
         saved = bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
         fos.flush();
@@ -440,16 +478,14 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
         WritableMap map = new WritableNativeMap();
         map.putString(FILEPATH, selectedFilePath);
 
-
         return map;
     }
-
 
     public long getVideoDurationBelowAndroid10(Context context, File file) {
         long timeInMillisec = 0;
         try {
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-//use one of overloaded setDataSource() functions to set your data source
+            // use one of overloaded setDataSource() functions to set your data source
             retriever.setDataSource(context, Uri.fromFile(file));
             String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
             timeInMillisec = Long.parseLong(time);
@@ -462,9 +498,11 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
     }
 
     public String getPathfromURI(Uri uri) {
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getReactApplicationContext().getCurrentActivity().getContentResolver().query(uri, projection, null, null, null);
-        if (cursor == null) return null;
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getReactApplicationContext().getCurrentActivity().getContentResolver().query(uri, projection,
+                null, null, null);
+        if (cursor == null)
+            return null;
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         String s = cursor.getString(column_index);
@@ -476,12 +514,11 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
     @SuppressLint("Range")
     public static long checkVideoDurationValidation(Context context, Uri uri) {
         Log.d("CommonHandler", "Uri: " + uri);
-        Cursor cursor = MediaStore.Video.query(context.getContentResolver(), uri, new
-                String[]{MediaStore.Video.VideoColumns.DURATION});
+        Cursor cursor = MediaStore.Video.query(context.getContentResolver(), uri,
+                new String[] { MediaStore.Video.VideoColumns.DURATION });
         long duration = 0;
         if (cursor != null && cursor.moveToFirst()) {
-            duration = cursor.getLong(cursor.getColumnIndex(MediaStore.Video
-                    .VideoColumns.DURATION));
+            duration = cursor.getLong(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION));
             cursor.close();
         }
 
@@ -504,7 +541,9 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
                 }
             }
             if (!listPermissionsNeeded.isEmpty()) {
-                ActivityCompat.requestPermissions(getReactApplicationContext().getCurrentActivity(), listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), MULTIPLE_PERMISSIONS_ABOVE10);
+                ActivityCompat.requestPermissions(getReactApplicationContext().getCurrentActivity(),
+                        listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
+                        MULTIPLE_PERMISSIONS_ABOVE10);
                 return false;
             }
         } else {
@@ -520,7 +559,9 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
                 }
             }
             if (!listPermissionsNeeded.isEmpty()) {
-                ActivityCompat.requestPermissions(getReactApplicationContext().getCurrentActivity(), listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), MULTIPLE_PERMISSIONS_BELOW10);
+                ActivityCompat.requestPermissions(getReactApplicationContext().getCurrentActivity(),
+                        listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
+                        MULTIPLE_PERMISSIONS_BELOW10);
                 return false;
             }
 
@@ -560,8 +601,8 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
     protected File saveVideo(final Uri uriVideo) {
         boolean success = false;
         // make the directory
-        File vidDir = new File(Environment.getExternalStoragePublicDirectory
-                (Environment.DIRECTORY_MOVIES) + File.separator + "Video Contest");
+        File vidDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES)
+                + File.separator + "Video Contest");
         vidDir.mkdirs();
         // create unique identifier
         Random generator = new Random();
@@ -586,7 +627,6 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
                     "Error during video saving", Toast.LENGTH_LONG).show();
         }
 
-
         return vidDir;
     }
 
@@ -597,9 +637,9 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
         File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
-                imageFileName,  // prefix
-                ".jpg",         // suffix
-                storageDir      // directory
+                imageFileName, // prefix
+                ".jpg", // suffix
+                storageDir // directory
         );
 
         // Save a file: path for use with ACTION_VIEW intents
@@ -608,21 +648,17 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
     }
 
     private void sendEvent(ReactContext reactContext,
-                           String eventName,
-                           @Nullable WritableArray map) {
-        Log.e("sendEvent-->","event has fired");
+            String eventName,
+            @Nullable WritableArray map) {
+        Log.e("sendEvent-->", "event has fired");
         reactContext
                 .getJSModule(RCTNativeAppEventEmitter.class)
                 .emit(eventName, map);
     }
+
     @ReactMethod
     public void removeListeners(Integer count) {
         // Remove upstream listeners, stop unnecessary background tasks
     }
 
-
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-  }
 }
