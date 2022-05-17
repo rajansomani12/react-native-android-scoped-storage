@@ -19,15 +19,14 @@ import android.os.FileUtils;
 import android.os.ParcelFileDescriptor;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -55,8 +54,8 @@ import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
 
-public class AccessFileModule extends ReactContextBaseJavaModule implements ActivityEventListener {
-
+public class AndroidScopedStorageModule extends ReactContextBaseJavaModule implements ActivityEventListener {
+    public Context context = null;
     public static final int MULTIPLE_PERMISSIONS_ABOVE10 = 10;
     public static final int MULTIPLE_PERMISSIONS_BELOW10 = 11;
     public static final int VIDEO_CAPTURE_ABOVE_ANDROID10 = 101;
@@ -83,8 +82,9 @@ public class AccessFileModule extends ReactContextBaseJavaModule implements Acti
             READ_EXTERNAL_STORAGE};
     File photoFile = null;
 
-    public AccessFileModule(@Nullable ReactApplicationContext reactContext) {
+    public AndroidScopedStorageModule(@Nullable ReactApplicationContext reactContext) {
         super(reactContext);
+        
         reactContext.addActivityEventListener(this);
     }
 
@@ -107,13 +107,14 @@ public class AccessFileModule extends ReactContextBaseJavaModule implements Acti
                     intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    getReactApplicationContext().getCurrentActivity().startActivityForResult(intent, VIDEO_CAPTURE_ABOVE_ANDROID10);
+
+//                    getReactApplicationContext().getCurrentActivity().startActivityForResult(intent, VIDEO_CAPTURE_ABOVE_ANDROID10);
                 } else {
                     Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                     takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 30); // pass max seconds for video capturing
                     takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
                     if (takeVideoIntent.resolveActivity(getReactApplicationContext().getCurrentActivity().getPackageManager()) != null) {
-                        getReactApplicationContext().getCurrentActivity().startActivityForResult(takeVideoIntent, VIDEO_CAPTURE_BELOW_ANDROID10);
+                        getReactApplicationContext().startActivityForResult(takeVideoIntent, VIDEO_CAPTURE_BELOW_ANDROID10);
                     }
                 }
 
@@ -346,12 +347,7 @@ public class AccessFileModule extends ReactContextBaseJavaModule implements Acti
         }
     }
 
-    @Override
-    public void onNewIntent(Intent intent) {
 
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     private WritableMap saveVideoForAndroi10AndAbove(Uri uri3) {
         WritableMap writableMap = new WritableNativeMap();
         Context context = getReactApplicationContext().getCurrentActivity();
@@ -430,7 +426,7 @@ public class AccessFileModule extends ReactContextBaseJavaModule implements Acti
             contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
             contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, "DCIM/" + SUB_DIRECTORY_NAME);
             imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-            selectedFilePath = FilePath.getPath(getReactApplicationContext(), imageUri);
+            selectedFilePath = com.videocompetition.FilePath.getPath(getReactApplicationContext(), imageUri);
 
             fos = resolver.openOutputStream(imageUri);
         }
@@ -625,7 +621,8 @@ public class AccessFileModule extends ReactContextBaseJavaModule implements Acti
     }
 
 
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-
-
+  }
 }

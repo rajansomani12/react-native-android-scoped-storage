@@ -1,6 +1,9 @@
 package com.example.reactnativeandroidscopedstorage;
 
 import com.facebook.react.ReactActivity;
+import com.facebook.react.ReactPackage;
+
+import java.util.List;
 
 public class MainActivity extends ReactActivity {
 
@@ -11,5 +14,15 @@ public class MainActivity extends ReactActivity {
   @Override
   protected String getMainComponentName() {
     return "AndroidScopedStorageExample";
+  }
+
+  @Override
+  protected boolean getUseDeveloperSupport() {
+    return false;
+  }
+
+  @Override
+  protected List<ReactPackage> getPackages() {
+    return null;
   }
 }

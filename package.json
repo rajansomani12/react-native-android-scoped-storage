@@ -2,7 +2,7 @@
   "name": "react-native-android-scoped-storage",
   "version": "1.0.1",
   "description": "test",
-  "main": "babel.config.js",
+  "main": "../react-native-android-scoped-storage/src/index.tsx",
   "directories": {
     "example": "example",
     "lib": "lib"
@@ -13,6 +13,22 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rajansomani12/react-native-android-scoped-storage.git"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.9",
+    "@babel/runtime": "^7.12.5",
+    "@types/react": "17.0.38",
+    "typedoc": "^0.22.10",
+    "typedoc-plugin-markdown": "^3.11.11",
+    "typescript": "4.5.4",
+    "react": "17.0.2",
+    "react-native": "0.66.4",
+    "@types/react-native": "0.66.11",
+    "jest": "27.4.7",
+    "metro": "0.66.2",
+    "metro-react-native-babel-preset": "^0.66.2",
+    "babel-jest": "^26.6.3",
+    "babel-plugin-module-resolver": "4.1.0"
   },
   "keywords": [
     "Android",

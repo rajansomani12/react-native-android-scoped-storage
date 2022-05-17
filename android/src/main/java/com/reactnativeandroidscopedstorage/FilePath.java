@@ -1,4 +1,4 @@
-package com.videocompetition;
+package com.reactnativeandroidscopedstorage;
 
 import android.content.ContentUris;
 import android.content.Context;
@@ -24,6 +24,7 @@ public static String getPath(final Context context, final Uri uri) {
     final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
     // DocumentProvider
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
     if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
 
         // ExternalStorageProvider
@@ -82,8 +83,9 @@ public static String getPath(final Context context, final Uri uri) {
     else if ("file".equalsIgnoreCase(uri.getScheme())) {
         return uri.getPath();
     }
+  }
 
-    return null;
+  return null;
 }
 
 
@@ -168,6 +170,7 @@ public static boolean isGooglePhotosUri(Uri uri) {
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
         // DocumentProvider
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
         if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
             if (isExternalStorageDocument(uri)) {
@@ -230,7 +233,8 @@ public static boolean isGooglePhotosUri(Uri uri) {
         else if ("file".equalsIgnoreCase(uri.getScheme())) {
             return uri.getPath();
         }
+      }
 
-        return null;
+      return null;
     }
 }
