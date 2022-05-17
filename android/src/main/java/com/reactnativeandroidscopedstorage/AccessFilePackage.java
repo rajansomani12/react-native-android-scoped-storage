@@ -1,4 +1,4 @@
-package com.reactnativeandroidscopedstorage;
+package com.videocompetition;
 
 import androidx.annotation.NonNull;
 
