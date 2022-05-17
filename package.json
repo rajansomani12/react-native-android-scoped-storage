@@ -36,7 +36,10 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/rajansomani12/react-native-android-scoped-storage",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rajansomani12/react-native-android-scoped-storage.git"
+  },
   "author": "Rajan Somani <rajan_somani@yahoo.com> (https://github.com/rajansomani12)",
   "license": "MIT",
   "bugs": {
@@ -143,5 +146,8 @@
         }
       ]
     ]
+  },
+  "directories": {
+    "example": "example"
   }
 }
