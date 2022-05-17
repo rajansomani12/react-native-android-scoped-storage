@@ -1,6 +1,6 @@
 {
   "name": "react-native-android-scoped-storage",
-  "version": "0.1.0",
+  "version": "1.0.1",
   "description": "access storage (image/video) for android 10 and above version ",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -149,5 +149,3 @@
   },
   "directories": {
     "example": "example"
-  }
-}
