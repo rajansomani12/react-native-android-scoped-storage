@@ -210,19 +210,7 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
 
         } else if (requestCode == VIDEO_PICKER_ABOVE_ANDROID10 && resultCode == RESULT_OK) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                // String filePath = "";
-                // filePath = getPathfromURI (data.getData());
-                // File file = new File(filePath);
-                // long duration = 0;
-                // duration = getVideoDurationBelowAndroid10(getReactApplicationContext(),file);
-                // if(duration == 0)
-                // {
-                // Toast.makeText(getReactApplicationContext(), "This Video file is either not
-                // supported or currepted", Toast.LENGTH_SHORT).show();
-                // return;
-                // }
-                // Log.e("duration--->", String.valueOf(duration));
-                // Log.e("filePath-->",String.valueOf(file.getAbsolutePath()));
+                
                 File videoFile = null;
                 try {
                     videoFile = File.createTempFile("Video_Contest", ".mp4");
@@ -259,7 +247,7 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
                         .substring(videoFile.getAbsolutePath().lastIndexOf("/") + 1);
                 long duration = 0;
                 duration = getVideoDurationBelowAndroid10(getReactApplicationContext(), videoFile);
-                writableMap.putString(FILEPATH, videoFile.getAbsolutePath());
+                writableMap.putString(FILEPATH, "file://" + videoFile.getAbsolutePath());
                 writableMap.putInt(DURATION, (int) duration);
                 promiseArray.pushMap(writableMap);
                 sendEvent(getReactApplicationContext(), VIDEO_EVENT_NAME, promiseArray);
@@ -277,7 +265,7 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
             // File file = saveVideo(vid);
             Log.e("FilePath-->", file.getAbsolutePath());
             Log.e("duration--->", String.valueOf(duration));
-            writableMap.putString(FILEPATH, file.getAbsolutePath());
+            writableMap.putString(FILEPATH, "file://" + file.getAbsolutePath());
             writableMap.putInt(DURATION, (int) duration);
             promiseArray.pushMap(writableMap);
             sendEvent(getReactApplicationContext(), VIDEO_EVENT_NAME, promiseArray);
@@ -296,7 +284,7 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
             Log.e("FilePath-->", file.getAbsolutePath());
             Log.e("duration--->", String.valueOf(duration));
 
-            writableMap.putString(FILEPATH, file.getAbsolutePath());
+            writableMap.putString(FILEPATH, "file://" + file.getAbsolutePath());
             writableMap.putInt(DURATION, (int) duration);
             promiseArray.pushMap(writableMap);
             sendEvent(getReactApplicationContext(), VIDEO_EVENT_NAME, promiseArray);
@@ -307,7 +295,7 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
             // imgUri);
             // final File file = new File(selectedFilePath);
             Log.e("FilePath-->", photoFile.getAbsolutePath());
-            writableMap.putString(FILEPATH, photoFile.getAbsolutePath());
+            writableMap.putString(FILEPATH, "file://" + photoFile.getAbsolutePath());
             promiseArray.pushMap(writableMap);
             sendEvent(getReactApplicationContext(), IMAGE_EVENT_NAME, promiseArray);
 
@@ -316,7 +304,7 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
             String selectedFilePath = FilePath.getPath(getReactApplicationContext(), imgUri);
             File file = new File(selectedFilePath);
             Log.e("FilePath-->", file.getAbsolutePath());
-            writableMap.putString(FILEPATH, file.getAbsolutePath());
+            writableMap.putString(FILEPATH, "file://" + file.getAbsolutePath());
             promiseArray.pushMap(writableMap);
             sendEvent(getReactApplicationContext(), IMAGE_EVENT_NAME, promiseArray);
         } else if (requestCode == IMAGE_PICKER_ABOVE_ANDROID10 && resultCode == RESULT_OK) {
@@ -360,7 +348,7 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
 
             String fileName = imageFile.getAbsolutePath().substring(imageFile.getAbsolutePath().lastIndexOf("/") + 1);
 
-            writableMap.putString(FILEPATH, imageFile.getAbsolutePath());
+            writableMap.putString(FILEPATH, "file://" + imageFile.getAbsolutePath());
             promiseArray.pushMap(writableMap);
             sendEvent(getReactApplicationContext(), IMAGE_EVENT_NAME, promiseArray);
         } else if (requestCode == IMAGE_CAPTURE_ABOVE_ANDROID10 && resultCode == RESULT_OK) {
@@ -439,7 +427,7 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
             long videoDuration = getVideoDurationBelowAndroid10(context, file);
             Log.e("Duration--->", String.valueOf(videoDuration));
             Log.e("FilePath--->", String.valueOf(file.getPath()));
-            writableMap.putString(FILEPATH, String.valueOf(file.getAbsolutePath()));
+            writableMap.putString(FILEPATH,"file://" + String.valueOf(file.getAbsolutePath()));
             writableMap.putInt(DURATION, (int) videoDuration);
 
         } catch (Exception e) {
@@ -476,7 +464,7 @@ public class AndroidScopedStorageModule extends ReactContextBaseJavaModule imple
         fos.close();
         Log.e("Path-->", selectedFilePath);
         WritableMap map = new WritableNativeMap();
-        map.putString(FILEPATH, selectedFilePath);
+        map.putString(FILEPATH,"file://" + selectedFilePath);
 
         return map;
     }
